@@ -20,7 +20,7 @@ const Homepage = () => {
         }
     };
 
-    const procurar = () => {
+    const procurar2 = () => {
         const lines = fileContent.split("\n").filter(line => line.trim() !== "");
         const count = lines.reduce((acc, line) => {
             const autores = line.split(", ").slice(0, -1);
@@ -32,8 +32,30 @@ const Homepage = () => {
         return count;
     }
 
+    const procurar1 = () => {
+        const lines = fileContent.split("\n").filter(line => line.trim() !== "");
+        const count = lines.reduce((acc, line) => {
+            const autores = line.split(", ").slice(0, -1);
+            if (autores.includes(autor1)) {
+                return acc + 1;
+            }
+            return acc;
+        }, 0);
+        return count;
+    }
+
     const calcular = () => {
-        const count = procurar();
+        var count;
+        if (autor1 !== "" && autor2 !== ""){
+            count = procurar2();
+        }
+        else if (autor1 !== ""){
+            count = procurar1();
+        }
+        else if (autor2 !== ""){
+            count = procurar1();
+        }
+        
         setLivros(count);
         console.log("count", count)
     }
@@ -48,7 +70,7 @@ const Homepage = () => {
             <input type="file" accept=".txt" onChange={handleFileChange} />
             {fileContent && (
                 <div className="mt-4 flext gap-4">
-                    <h3>Insira dois autores:</h3>
+                    <h3>Insira um ou dois autores:</h3>
 
                     <div>
                         <Input
