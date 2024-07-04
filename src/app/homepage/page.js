@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Input } from "@nextui-org/react"
 
 const Homepage = () => {
@@ -20,47 +20,63 @@ const Homepage = () => {
         }
     };
 
-    const procurar2 = () => {
-        const lines = fileContent.split("\n").filter(line => line.trim() !== "");
-        const count = lines.reduce((acc, line) => {
-            const autores = line.split(", ").slice(0, -1);
-            if (autores.includes(autor1) && autores.includes(autor2)) {
-                return acc + 1;
-            }
-            return acc;
-        }, 0);
-        return count;
-    }
+    const [indexedData, setIndexedData] = useState({});
+    useEffect(() => {
+        const indexFileData = (text) => {
+            const lines = text.split("\n").filter(line => line.trim() !== "");
+            const indexed = {};
 
-    const procurar1 = () => {
-        const lines = fileContent.split("\n").filter(line => line.trim() !== "");
-        const count = lines.reduce((acc, line) => {
-            const autores = line.split(", ").slice(0, -1);
-            if (autores.includes(autor1)) {
-                return acc + 1;
-            }
-            return acc;
-        }, 0);
+            lines.forEach(line => {
+                const autores = line.split(", ").slice(0, -1);
+                autores.forEach(autor => {
+                    if (!indexed[autor]) {
+                        indexed[autor] = [];
+                    }
+                    indexed[autor].push(line); 
+                });
+            });
+
+            setIndexedData(indexed);
+        };
+
+
+        indexFileData(fileContent); 
+    }, [fileContent]);
+
+    const countBooksByAuthors = (author1, author2) => {
+        let count = 0;
+        if (indexedData[author1] && indexedData[author2]) {
+            indexedData[author1].forEach(book1 => {
+                indexedData[author2].forEach(book2 => {
+                    if (book1 === book2) {
+                        count++;
+                    }
+                });
+            });
+        }
         return count;
-    }
+    };
+
+    const countBooksByAuthor = (author) => {
+        if (indexedData[author]) {
+            return indexedData[author].length;
+        }
+        return 0;
+    };
 
     const calcular = () => {
-        var count;
-        if (autor1 !== "" && autor2 !== ""){
-            count = procurar2();
-        }
-        else if (autor1 !== ""){
-            count = procurar1();
-        }
-        else if (autor2 !== ""){
-            count = procurar1();
+        let count = 0;
+        if (autor1 && autor2) {
+            count = countBooksByAuthors(autor1, autor2);
+        } else if (autor1) {
+            count = countBooksByAuthor(autor1);
+        } else if (autor2) {
+            count = countBooksByAuthor(autor2);
         }
         
         setLivros(count);
-        console.log("count", count)
-    }
-
-    console.log("livros", livros)
+        console.log(count)
+    };
 
     return (
         <div className="flex flex-col gap-8">
@@ -104,7 +120,10 @@ const Homepage = () => {
 
 
 
-                    <div>Numero de Livros: {livros}</div>
+                    { autor1 !== "" && autor2 === "" ?
+                        <div>Numero de Livros escritos pelo o autor {autor1}: {livros}</div> :
+                        <div>Numero de Livros escritos pelo o autor {autor1} com o co-autor2: {autor2}: {livros} </div>
+                    }
 
 
                     
