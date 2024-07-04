@@ -6,7 +6,8 @@ const Homepage = () => {
     const [fileContent, setFileContent] = useState("");
     const [autor1, setAutor1] = useState("");
     const [autor2, setAutor2] = useState("");
-    const [livros, setLivros] = useState(0)
+    const [livros, setLivros] = useState(0);0
+    const [indexedData, setIndexedData] = useState({});
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -20,7 +21,6 @@ const Homepage = () => {
         }
     };
 
-    const [indexedData, setIndexedData] = useState({});
     useEffect(() => {
         const indexFileData = (text) => {
             const lines = text.split("\n").filter(line => line.trim() !== "");
@@ -75,7 +75,7 @@ const Homepage = () => {
         }
         
         setLivros(count);
-        console.log(count)
+        console.log(count);
     };
 
     return (
@@ -122,7 +122,9 @@ const Homepage = () => {
 
                     { autor1 !== "" && autor2 === "" ?
                         <div>Numero de Livros escritos pelo o autor {autor1}: {livros}</div> :
-                        <div>Numero de Livros escritos pelo o autor {autor1} com o co-autor2: {autor2}: {livros} </div>
+                        autor1 !== "" && autor2 !== "" ?
+                        <div>Numero de Livros escritos pelo o autor {autor1} com o co-autor2 {autor2}: {livros} </div> :
+                        <div></div>
                     }
 
 
